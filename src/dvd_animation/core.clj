@@ -5,19 +5,27 @@
 (defn setup []
   (q/frame-rate 60)
   (q/color-mode :hsb)
-  {:color 0
+  {:color (rand-int 256)
    :x 0
    :y 0
-   :vx 2
-   :vy 1})
+   :vx 4
+   :vy 3})
 
 (defn update-state [state]
   ; Update sketch state by changing circle color and position.
-  {:color (mod (+ (:color state) 0.7) 255)
+  {:color (if (or (>= (+ (:x state) (:vx state)) 400)
+                  (<= (+ (:x state) (:vx state)) 0)
+                  (>= (+ (:y state) (:vy state)) 400)
+                  (<= (+ (:y state) (:vy state)) 0)) (rand-int 256)
+                                                     (:color state))
    :x (+ (:x state) (:vx state))
    :y (+ (:y state) (:vy state))
-   :vx (:vx state)
-   :vy (:vy state)
+   :vx (cond (>= (+ (:x state) (:vx state)) 400)  (* -1 (:vx state))
+             (<= (+ (:x state) (:vx state)) 0)    (* -1 (:vx state))
+             :else                                (:vx state))
+   :vy (cond (>= (+ (:y state) (:vy state)) 400)  (* -1 (:vy state))
+             (<= (+ (:y state) (:vy state)) 0)    (* -1 (:vy state))
+             :else                                (:vy state))
    })
 
 (defn draw-state [state]
